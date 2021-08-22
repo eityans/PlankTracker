@@ -38,7 +38,9 @@ class TimerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as? MainActivity)?.setFabVisible(View.INVISIBLE)
-        binding.save.setOnClickListener { savePlank(it) }
+
+        binding.saveActionButton.setOnClickListener { savePlank(it) }
+
     }
 
     private fun savePlank(view: View) {
