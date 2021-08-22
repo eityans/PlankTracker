@@ -12,6 +12,7 @@ import com.google.android.material.snackbar.Snackbar
 import io.realm.Realm
 import io.realm.kotlin.createObject
 import io.realm.kotlin.where
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -22,14 +23,18 @@ class TimerFragment : Fragment() {
 
     private lateinit var realm: Realm
 
+    private var count: Int = 0
+    private var period: Int = 100   // 100ミリ秒で更新する
+    private val dataFormat: SimpleDateFormat = SimpleDateFormat("mm:ss.S", Locale.US)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         realm = Realm.getDefaultInstance()
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentTimerBinding.inflate(inflater, container, false)
         return binding.root
@@ -38,6 +43,8 @@ class TimerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as? MainActivity)?.setFabVisible(View.INVISIBLE)
+
+        binding.timerText.text = dataFormat.format(0)
 
         binding.saveActionButton.setOnClickListener { savePlank(it) }
 
