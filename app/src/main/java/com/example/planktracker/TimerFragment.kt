@@ -48,7 +48,7 @@ class TimerFragment : Fragment() {
             val plank = db.createObject<Plank>(nextId)
             val date = Date(System.currentTimeMillis())
             plank.date = date
-            plank.sec = Integer.parseInt(binding.secEdit.text.toString())
+            plank.sec = 1
         }
         Snackbar.make(view, "追加しました", Snackbar.LENGTH_SHORT)
             .setAction("戻る") { findNavController().popBackStack() }
