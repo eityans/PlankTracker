@@ -58,6 +58,7 @@ class TimerFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        (activity as? MainActivity)?.setFabVisible(View.VISIBLE)
         _binding = null
     }
 

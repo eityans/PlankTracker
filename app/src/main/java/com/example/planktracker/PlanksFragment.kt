@@ -47,6 +47,7 @@ class PlanksFragment : Fragment() {
         val planks = realm.where<Plank>().findAll()
         val adapter = PlankAdapter(planks)
         binding.plankList.adapter = adapter
+
     }
 
     override fun onDestroyView() {
