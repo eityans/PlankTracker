@@ -2,6 +2,8 @@ package com.example.planktracker
 
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,9 +25,21 @@ class TimerFragment : Fragment() {
 
     private lateinit var realm: Realm
 
-    private var count: Int = 0
-    private var period: Int = 100   // 100ミリ秒で更新する
-    private val dataFormat: SimpleDateFormat = SimpleDateFormat("mm:ss.S", Locale.US)
+    private var count: Long = 0L
+    private var period: Long = 1000L   // 1000ミリ秒で更新する
+    private var isRunning = false
+    private val dataFormat: SimpleDateFormat = SimpleDateFormat("mm:ss", Locale.US)
+
+    // 'Handler()' is deprecated as of API 30: Android 11.0 (R)
+    private val handler: Handler = Handler(Looper.getMainLooper())
+
+    private val runnable: Runnable = object : Runnable {
+        override fun run() {
+            count++
+            binding.timerText.text = dataFormat.format(count * period)
+            handler.postDelayed(this, period)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +61,17 @@ class TimerFragment : Fragment() {
         binding.timerText.text = dataFormat.format(0)
 
         binding.saveActionButton.setOnClickListener { savePlank(it) }
+        binding.playStop.setOnClickListener {
+            when (isRunning) {
+                true -> {
+                    handler.removeCallbacks(runnable);
+                }
+                false -> {
+                    handler.post(runnable);
+                }
+            }
+            isRunning = !isRunning
+        }
 
     }
 
@@ -57,7 +82,7 @@ class TimerFragment : Fragment() {
             val plank = db.createObject<Plank>(nextId)
             val date = Date(System.currentTimeMillis())
             plank.date = date
-            plank.sec = 1
+            plank.sec = getSec()
         }
         Snackbar.make(view, "追加しました", Snackbar.LENGTH_SHORT)
             .setAction("戻る") { findNavController().popBackStack() }
@@ -76,11 +101,8 @@ class TimerFragment : Fragment() {
         realm.close()
     }
 
-//    private fun getNowDate(): String {
-//        val df: DateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm")
-//        val date = Date(System.currentTimeMillis())
-//        return df.format(date)
-//    }
-
+    private fun getSec(): Int {
+        return (count / (1000 / period)).toInt()
+    }
 
 }
